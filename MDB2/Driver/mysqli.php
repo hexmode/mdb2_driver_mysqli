@@ -138,6 +138,24 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
     }
 
     // }}}
+
+    public function wrapResult(
+        $result_resource,
+        $types = array(),
+        $result_class = true,
+        $result_wrap_class = true,
+        $limit = null,
+        $offset = null
+    ) {
+        return parent::wrapResult( 
+            $result_resource,
+            $types,
+            $result_class,
+            $result_wrap_class,
+            $limit,
+            $offset
+        );
+    }
     // {{{ _reCheckSupportedOptions()
 
     /**
