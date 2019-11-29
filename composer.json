@@ -16,7 +16,14 @@
 		"silverorange/mdb2": "*"
 	},
 	"autoload": {
-		"classmap": [ "MDB2/Driver/mysqli.php" ]
+		"classmap": [
+			"MDB2/Driver/mysqli.php",
+			"MDB2/Driver/Datatype/mysqli.php",
+			"MDB2/Driver/Function/mysqli.php",
+			"MDB2/Driver/Manager/mysqli.php",
+			"MDB2/Driver/Native/mysqli.php",
+			"MDB2/Driver/Reverse/mysqli.php"
+		]
 	},
 	"include-path": [
 		"./"
