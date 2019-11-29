@@ -71,13 +71,13 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
     );
 
     /**
-     * The ouptut of mysqli_errno() in _doQuery(), if any.
+     * The ouptut of mysqli_errno() in doQuery(), if any.
      * @var integer
      */
     protected $_query_errno;
 
     /**
-     * The ouptut of mysqli_error() in _doQuery(), if any.
+     * The ouptut of mysqli_error() in doQuery(), if any.
      * @var string
      */
     protected $_query_error;
@@ -354,13 +354,13 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                     'savepoint cannot be released when changes are auto committed', __FUNCTION__);
             }
             $query = 'SAVEPOINT '.$savepoint;
-            return $this->_doQuery($query, true);
+            return $this->doQuery($query, true);
         }
         if ($this->in_transaction) {
             return MDB2_OK;  //nothing to do
         }
         $query = $this->start_transaction ? 'START TRANSACTION' : 'SET AUTOCOMMIT = 0';
-        $result = $this->_doQuery($query, true);
+        $result = $this->doQuery($query, true);
         if (MDB2::isError($result)) {
             return $result;
         }
@@ -399,7 +399,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                 return MDB2_OK;
             }
             $query = 'RELEASE SAVEPOINT '.$savepoint;
-            return $this->_doQuery($query, true);
+            return $this->doQuery($query, true);
         }
 
         if (!$this->supports('transactions')) {
@@ -407,13 +407,13 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                 'transactions are not supported', __FUNCTION__);
         }
 
-        $result = $this->_doQuery('COMMIT', true);
+        $result = $this->doQuery('COMMIT', true);
         if (MDB2::isError($result)) {
             return $result;
         }
         if (!$this->start_transaction) {
             $query = 'SET AUTOCOMMIT = 1';
-            $result = $this->_doQuery($query, true);
+            $result = $this->doQuery($query, true);
             if (MDB2::isError($result)) {
                 return $result;
             }
@@ -449,17 +449,17 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                     'savepoints are not supported', __FUNCTION__);
             }
             $query = 'ROLLBACK TO SAVEPOINT '.$savepoint;
-            return $this->_doQuery($query, true);
+            return $this->doQuery($query, true);
         }
 
         $query = 'ROLLBACK';
-        $result = $this->_doQuery($query, true);
+        $result = $this->doQuery($query, true);
         if (MDB2::isError($result)) {
             return $result;
         }
         if (!$this->start_transaction) {
             $query = 'SET AUTOCOMMIT = 1';
-            $result = $this->_doQuery($query, true);
+            $result = $this->doQuery($query, true);
             if (MDB2::isError($result)) {
                 return $result;
             }
@@ -507,7 +507,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         }
 
         $query = "SET SESSION TRANSACTION ISOLATION LEVEL $isolation";
-        return $this->_doQuery($query, true);
+        return $this->doQuery($query, true);
     }
 
     // }}}
@@ -638,7 +638,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             if (null !== $collation) {
                 $query .= " COLLATE '".mysqli_real_escape_string($connection, $collation)."'";
             }
-            return $this->_doQuery($query, true, $connection);
+            return $this->doQuery($query, true, $connection);
         }
         if (!$result = mysqli_set_charset($connection, $charset)) {
             $err = $this->raiseError(null, null, null,
@@ -741,7 +741,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         $this->offset = $this->limit = 0;
         $query = $this->_modifyQuery($query, $is_manip, $limit, $offset);
 
-        $result = $this->_doQuery($query, $is_manip, $connection, $this->database_name);
+        $result = $this->doQuery($query, $is_manip, $connection, $this->database_name);
         if (!MDB2::isError($result)) {
             $result = $this->_affectedRows($connection, $result);
         }
@@ -751,7 +751,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
     }
 
     // }}}
-    // {{{ _doQuery()
+    // {{{ doQuery()
 
     /**
      * Execute a query
@@ -762,7 +762,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
      * @return result or error object
      * @access protected
      */
-    function _doQuery($query, $is_manip = false, $connection = null, $database_name = null)
+    function doQuery($query, $is_manip = false, $connection = null, $database_name = null)
     {
         $this->last_query = $query;
         $result = $this->debug($query, 'query', array('is_manip' => $is_manip, 'when' => 'pre'));
@@ -1155,7 +1155,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             $statement_name = substr(strtolower($statement_name), 0, $this->options['max_identifiers_length']);
             $query = "PREPARE $statement_name FROM ".$this->quote($query, 'text');
 
-            $statement = $this->_doQuery($query, true, $connection);
+            $statement = $this->doQuery($query, true, $connection);
             if (MDB2::isError($statement)) {
                 return $statement;
             }
@@ -1284,7 +1284,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
 
         $table = $this->quoteIdentifier($table, true);
         $query = "REPLACE INTO $table ($query) VALUES ($values)";
-        $result = $this->_doQuery($query, true, $connection);
+        $result = $this->doQuery($query, true, $connection);
         if (MDB2::isError($result)) {
             return $result;
         }
@@ -1312,7 +1312,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         $query = "INSERT INTO $sequence_name ($seqcol_name) VALUES (NULL)";
         $this->pushErrorHandling(PEAR_ERROR_RETURN);
         $this->expectError(MDB2_ERROR_NOSUCHTABLE);
-        $result = $this->_doQuery($query, true);
+        $result = $this->doQuery($query, true);
         $this->popExpect();
         $this->popErrorHandling();
         if (MDB2::isError($result)) {
@@ -1331,7 +1331,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         $value = $this->lastInsertID();
         if (is_numeric($value)) {
             $query = "DELETE FROM $sequence_name WHERE $seqcol_name < $value";
-            $result = $this->_doQuery($query, true);
+            $result = $this->doQuery($query, true);
             if (MDB2::isError($result)) {
                 $this->warnings[] = 'nextID: could not delete previous sequence table values from '.$seq_name;
             }
@@ -1767,7 +1767,7 @@ class MDB2_Statement_mysqli extends MDB2_Statement_Common
                         return $quoted;
                     }
                     $param_query = 'SET @'.$parameter.' = '.$quoted;
-                    $result = $this->db->_doQuery($param_query, true, $connection);
+                    $result = $this->db->doQuery($param_query, true, $connection);
                     if (MDB2::isError($result)) {
                         return $result;
                     }
@@ -1830,7 +1830,7 @@ class MDB2_Statement_mysqli extends MDB2_Statement_Common
         }
 
         if (!is_object($this->statement)) {
-            $result = $this->db->_doQuery($query, $this->is_manip, $connection);
+            $result = $this->db->doQuery($query, $this->is_manip, $connection);
             if (MDB2::isError($result)) {
                 return $result;
             }
@@ -1895,7 +1895,7 @@ class MDB2_Statement_mysqli extends MDB2_Statement_Common
             }
 
             $query = 'DEALLOCATE PREPARE '.$this->statement;
-            $result = $this->db->_doQuery($query, true, $connection);
+            $result = $this->db->doQuery($query, true, $connection);
         }
 
         parent::free();
