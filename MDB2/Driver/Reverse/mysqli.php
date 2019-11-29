@@ -368,7 +368,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             if ($constraint_name == $key_name) {
                 if ($row['non_unique']) {
                     //FOREIGN KEY?
-                    return $this->_getTableFKConstraintDefinition($table, $constraint_name_original, $definition);
+                    return $this->getTableFKConstraintDefinition($table, $constraint_name_original, $definition);
                 }
                 if ($row['key_name'] == 'PRIMARY') {
                     $definition['primary'] = true;
@@ -394,7 +394,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         }
         $result->free();
         if (empty($definition['fields'])) {
-            return $this->_getTableFKConstraintDefinition($table, $constraint_name_original, $definition);
+            return $this->getTableFKConstraintDefinition($table, $constraint_name_original, $definition);
         }
         return $definition;
     }
@@ -412,7 +412,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
      * @return array|PEAR_Error
      * @access private
      */
-    function _getTableFKConstraintDefinition($table, $constraint_name, $definition)
+    function getTableFKConstraintDefinition($table, $constraint_name, $definition)
     {
         $db = $this->getDBInstance();
         if (MDB2::isError($db)) {

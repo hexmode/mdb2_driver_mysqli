@@ -149,7 +149,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
      * @return string
      * @access protected
      */
-    function _getAdvancedFKOptions($definition)
+    function getAdvancedFKOptions($definition)
     {
         $query = '';
         if (!empty($definition['match'])) {
@@ -230,7 +230,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
             }
         }
 
-        $query = $this->_getCreateTableQuery($name, $fields, $options);
+        $query = $this->getCreateTableQuery($name, $fields, $options);
         if (MDB2::isError($query)) {
             return $query;
         }
@@ -297,7 +297,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
             foreach ($constraints as $constraint) {
                 $definition = $db->reverse->getTableConstraintDefinition($name, $constraint);
                 if (!MDB2::isError($definition) && !empty($definition['foreign'])) {
-                    $result = $this->_dropFKTriggers($name, $constraint, $definition['references']['table']);
+                    $result = $this->dropFKTriggers($name, $constraint, $definition['references']['table']);
                     if (MDB2::isError($result)) {
                         return $result;
                     }
@@ -714,7 +714,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
 
         $result = array();
         foreach ($table_names as $table) {
-            if (!$this->_fixSequenceName($table[0], true)) {
+            if (!$this->fixSequenceName($table[0], true)) {
                 $result[] = $table[0];
             }
         }
@@ -915,7 +915,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
 
         $result = array();
         foreach ($indexes as $index_data) {
-            if ($index_data[$non_unique] && ($index = $this->_fixIndexName($index_data[$key_name]))) {
+            if ($index_data[$non_unique] && ($index = $this->fixIndexName($index_data[$key_name]))) {
                 $result[$index] = true;
             }
         }
@@ -994,7 +994,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
                 $referenced_fields[] = $db->quoteIdentifier($field, true);
             }
             $query .= ' ('. implode(', ', $referenced_fields) . ')';
-            $query .= $this->_getAdvancedFKOptions($definition);
+            $query .= $this->getAdvancedFKOptions($definition);
 
             // add index on FK column(s) or we can't add a FK constraint
             // @see http://forums.mysql.com/read.php?22,19755,226009
@@ -1008,7 +1008,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
             return $res;
         }
         if (!empty($definition['foreign'])) {
-            return $this->_createFKTriggers($table, array($name => $definition));
+            return $this->createFKTriggers($table, array($name => $definition));
         }
         return MDB2_OK;
     }
@@ -1046,7 +1046,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
         $definition = $db->reverse->getTableConstraintDefinition($table, $name);
         if (!MDB2::isError($definition) && !empty($definition['foreign'])) {
             //first drop the FK enforcing triggers
-            $result = $this->_dropFKTriggers($table, $name, $definition['references']['table']);
+            $result = $this->dropFKTriggers($table, $name, $definition['references']['table']);
             if (MDB2::isError($result)) {
                 return $result;
             }
@@ -1087,7 +1087,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access private
      */
-    function _createFKTriggers($table, $foreign_keys)
+    function createFKTriggers($table, $foreign_keys)
     {
         $db = $this->getDBInstance();
         if (MDB2::isError($db)) {
@@ -1231,7 +1231,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access private
      */
-    function _dropFKTriggers($table, $fkname, $referenced_table)
+    function dropFKTriggers($table, $fkname, $referenced_table)
     {
         $db = $this->getDBInstance();
         if (MDB2::isError($db)) {
@@ -1294,7 +1294,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
         foreach ($indexes as $index_data) {
             if (!$index_data[$non_unique]) {
                 if ($index_data[$key_name] !== 'PRIMARY') {
-                    $index = $this->_fixIndexName($index_data[$key_name]);
+                    $index = $this->fixIndexName($index_data[$key_name]);
                 } else {
                     $index = 'PRIMARY';
                 }
@@ -1456,7 +1456,7 @@ class MDB2_Driver_Manager_mysqli extends MDB2_Driver_Manager_Common
 
         $result = array();
         foreach ($table_names as $table_name) {
-            if ($sqn = $this->_fixSequenceName($table_name, true)) {
+            if ($sqn = $this->fixSequenceName($table_name, true)) {
                 $result[] = $sqn;
             }
         }

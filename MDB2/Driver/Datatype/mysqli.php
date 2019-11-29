@@ -67,7 +67,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
      *                 of a field declaration.
      */
-    function _getCharsetFieldDeclaration($charset)
+    function getCharsetFieldDeclaration($charset)
     {
         return 'CHARACTER SET '.$charset;
     }
@@ -83,7 +83,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      * @return string  DBMS specific SQL code portion needed to set the COLLATION
      *                 of a field declaration.
      */
-    function _getCollationFieldDeclaration($collation)
+    function getCollationFieldDeclaration($collation)
     {
         return 'COLLATE '.$collation;
     }
@@ -254,7 +254,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      *                 declare the specified field.
      * @access protected
      */
-    function _getIntegerDeclaration($name, $field)
+    function getIntegerDeclaration($name, $field)
     {
         $db = $this->getDBInstance();
         if (MDB2::isError($db)) {
@@ -309,12 +309,12 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      *                 declare the specified field.
      * @access protected
      */
-    function _getFloatDeclaration($name, $field)
+    function getFloatDeclaration($name, $field)
     {
         // Since AUTO_INCREMENT can be used for integer or floating-point types,
         // reuse the INTEGER declaration
         // @see http://bugs.mysql.com/bug.php?id=31032
-        return $this->_getIntegerDeclaration($name, $field);
+        return $this->getIntegerDeclaration($name, $field);
     }
 
     // }}}
@@ -346,7 +346,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      *                 declare the specified field.
      * @access protected
      */
-    function _getDecimalDeclaration($name, $field)
+    function getDecimalDeclaration($name, $field)
     {
         $db = $this->getDBInstance();
         if (MDB2::isError($db)) {
@@ -438,7 +438,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      * @return array containing the various possible types, length, sign, fixed
      * @access public
      */
-    function _mapNativeDatatype($field)
+    function mapNativeDatatype($field)
     {
         $db_type = strtolower($field['type']);
         $db_type = strtok($db_type, '(), ');
