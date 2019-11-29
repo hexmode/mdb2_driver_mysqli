@@ -17,7 +17,10 @@
 	},
 	"autoload": {
 		"classmap": [
+			"MDB2/BufferedResult/mysqli.php",
 			"MDB2/Driver/mysqli.php",
+			"MDB2/Result/mysqli.php",
+			"MDB2/Statement/mysqli.php",
 			"MDB2/Driver/Datatype/mysqli.php",
 			"MDB2/Driver/Function/mysqli.php",
 			"MDB2/Driver/Manager/mysqli.php",
